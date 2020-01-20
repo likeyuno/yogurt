@@ -7,7 +7,7 @@
  * https://github.com/kallydev/yogurt/blob/master/LICENSE
  */
 
-package static
+package config
 
 import (
 	"gopkg.in/yaml.v2"

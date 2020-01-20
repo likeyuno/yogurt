@@ -7,10 +7,10 @@
  * https://github.com/kallydev/yogurt/blob/master/LICENSE
  */
 
-package static
+package database
 
 import (
-	static "github.com/kallydev/yogurt/common/context"
+	"github.com/kallydev/yogurt/common/context"
 	_ "github.com/lib/pq"
 	"net"
 	"net/url"
@@ -22,7 +22,7 @@ import (
 func DialPostgres(schema, username, password, host string, port int, database string, options map[string]string) (*xorm.Engine, error) {
 	if engine, err := xorm.NewEngine(createURL("postgres", username, password, host, port, database, options)); err != nil {
 		return nil, err
-	} else if err := engine.DB().PingContext(static.WithTimeoutNoCancel(time.Second * 3)); err != nil {
+	} else if err := engine.DB().PingContext(context.WithTimeoutNoCancel(time.Second * 3)); err != nil {
 		return nil, err
 	} else {
 		engine.SetSchema(schema)

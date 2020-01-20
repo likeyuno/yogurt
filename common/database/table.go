@@ -1,4 +1,4 @@
-package static
+package database
 
 import (
 	"database/sql"
