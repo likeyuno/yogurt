@@ -1,3 +1,9 @@
 .idea
 .vscode
 
+/service/static/config/config.yaml
+！/service/static/config/
+
+/service/static/config/cert/*
+!/service/static/config/cert/
+!/service/static/config/cert/README.md
