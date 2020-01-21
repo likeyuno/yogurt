@@ -7,7 +7,7 @@
  * https://github.com/kallydev/yogurt/blob/master/LICENSE
  */
 
-package static
+package context
 
 import (
 	"golang.org/x/net/context"
