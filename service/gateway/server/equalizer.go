@@ -10,7 +10,10 @@
 package server
 
 import (
+	"encoding/json"
+	"errors"
 	"github.com/kallydev/yogurt/common/context"
+	"github.com/kallydev/yogurt/common/restful"
 	"github.com/kallydev/yogurt/service/gateway/database/table"
 	"github.com/lib/pq"
 	"log"
@@ -66,7 +69,12 @@ func (e *Equalizer) Handle(rw http.ResponseWriter, r *http.Request) {
 			r.Header.Add("Client-IP", r.RemoteAddr)
 			proxy.ServeHTTP(rw, r)
 		}
-	} else if _, err := rw.Write([]byte("not found")); err != nil {
-		log.Println(err)
+	} else {
+		res := restful.RespondJSON(restful.Error, errors.New("service not found"), nil)
+		if data, err := json.MarshalIndent(res, "", restful.Ident); err != nil {
+			log.Println(err)
+		} else if _, err := rw.Write(data); err != nil {
+			log.Println(err)
+		}
 	}
 }

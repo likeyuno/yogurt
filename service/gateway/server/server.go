@@ -10,7 +10,10 @@
 package server
 
 import (
+	"encoding/json"
+	"errors"
 	"github.com/kallydev/yogurt/common/context"
+	"github.com/kallydev/yogurt/common/restful"
 	"github.com/kallydev/yogurt/service/gateway/database/table"
 	"log"
 	"net"
@@ -45,10 +48,12 @@ func (s *Server) EqualizerHandleFunc(rw http.ResponseWriter, r *http.Request) {
 		}
 	}(*r)
 	if s.Limit.Handle(r) {
-		if _, err := rw.Write([]byte("NOOOOOOOOOOOOOOOOOOOOOOO")); err != nil {
+		res := restful.RespondJSON(restful.Error, errors.New("requests are too frequent"), nil)
+		if data, err := json.MarshalIndent(res, "", restful.Ident); err != nil {
+			log.Println(err)
+		} else if _, err := rw.Write(data); err != nil {
 			log.Println(err)
 		}
-		return
 	} else {
 		s.Equalizer.Handle(rw, r)
 	}
