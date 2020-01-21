@@ -10,23 +10,22 @@
 package database
 
 import (
+	"database/sql"
 	"github.com/kallydev/yogurt/common/context"
 	_ "github.com/lib/pq"
 	"net"
 	"net/url"
 	"strconv"
 	"time"
-	"xorm.io/xorm"
 )
 
-func DialPostgres(schema, username, password, host string, port int, database string, options map[string]string) (*xorm.Engine, error) {
-	if engine, err := xorm.NewEngine(createURL("postgres", username, password, host, port, database, options)); err != nil {
+func DialPostgres(username, password, host string, port int, database string, options map[string]string) (*sql.DB, error) {
+	if db, err := sql.Open(createURL("postgres", username, password, host, port, database, options)); err != nil {
 		return nil, err
-	} else if err := engine.DB().PingContext(context.WithTimeoutNoCancel(time.Second * 3)); err != nil {
+	} else if err := db.PingContext(context.WithTimeoutNoCancel(time.Second * 3)); err != nil {
 		return nil, err
 	} else {
-		engine.SetSchema(schema)
-		return engine, nil
+		return db, nil
 	}
 }
 
