@@ -15,7 +15,6 @@ import (
 	"github.com/kallydev/yogurt/common/context"
 	"github.com/kallydev/yogurt/common/restful"
 	"github.com/kallydev/yogurt/service/gateway/database/table"
-	"github.com/lib/pq"
 	"log"
 	"math/rand"
 	"net/http"
@@ -49,7 +48,7 @@ func (e *Equalizer) autoUpdate() {
 				e.Update(service.Host, service.Servers)
 			}
 		}
-		time.Sleep(time.Second)
+		time.Sleep(time.Second * 5)
 	}
 }
 
@@ -59,7 +58,7 @@ func (e *Equalizer) Update(host string, services []string) {
 
 func (e *Equalizer) Handle(rw http.ResponseWriter, r *http.Request) {
 	if v, ok := e.Load(r.Host); ok {
-		servers := v.(pq.StringArray)
+		servers := v.([]string)
 		rand.Seed(time.Now().Unix())
 		if remote, err := url.Parse(servers[rand.Intn(len(servers))]); err != nil {
 			log.Println(err)
