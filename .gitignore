@@ -7,3 +7,11 @@
 /service/static/config/cert/*
 !/service/static/config/cert/
 !/service/static/config/cert/README.md
+
+/config/*
+!/config/config_example.yaml
+!/config/
+
+/config/cert/*
+!/config/cert/
+!/config/cert/README.md
