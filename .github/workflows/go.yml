@@ -27,5 +27,5 @@ jobs:
       - name: Build static service
         run: go build -v ./service/static/cmd/main.go
 
-      - name: Build static service
+      - name: Build gateway service
         run: go build -v ./service/gateway/cmd/main.go
