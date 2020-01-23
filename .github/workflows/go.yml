@@ -29,3 +29,6 @@ jobs:
 
       - name: Build gateway service
         run: go build -v ./service/gateway/cmd/main.go
+
+      - name: Build api service
+        run: go build -v ./service/api/cmd/main.go
