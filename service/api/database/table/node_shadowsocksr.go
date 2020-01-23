@@ -10,14 +10,14 @@
 package table
 
 import (
-	"github.com/go-pg/pg/v9"
 	"github.com/kallydev/yogurt/common/database"
 	"github.com/kallydev/yogurt/service/api"
 )
 
 type NodeShadowsocksR struct {
-	tableName struct{} `pg:"public.nodes_shadowsocksr"`
+	tableName struct{} `pg:"public.nodes_shadowsocksr_new"`
 
+	NodeID           string
 	Host             string
 	Port             string
 	Password         string
@@ -32,8 +32,11 @@ type NodeShadowsocksR struct {
 	database.Table
 }
 
-func QueryNodeShadowsocksRByIDs(ids []string) ([]NodeShadowsocksR, error) {
-	var nssrs []NodeShadowsocksR
-	err := api.DB.Model(&nssrs).Where("id in (?)", pg.In(ids)).Order("host ASC").Select()
+func QueryNodeShadowsocksRByIDs(ids []string) ([]Node, error) {
+	var nssrs []Node
+	err := api.DB.Model(&nssrs).
+		Relation("NodeShadowsocksR").
+		Order("name ASC").
+		Select()
 	return nssrs, err
 }

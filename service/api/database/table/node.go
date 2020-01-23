@@ -11,6 +11,7 @@ package table
 
 import (
 	"github.com/go-pg/pg/v9"
+	"github.com/go-pg/pg/v9/orm"
 	"github.com/kallydev/yogurt/common/database"
 	"github.com/kallydev/yogurt/service/api"
 )
@@ -25,6 +26,8 @@ type Node struct {
 	Type        string
 	FastOpen    bool
 
+	NodeShadowsocksR *NodeShadowsocksR
+
 	database.Table
 }
 
@@ -34,9 +37,13 @@ func QueryNodeByID(id string) (*Node, error) {
 	return &node, err
 }
 
-// SELECT * FROM public.nodes WHERE array_position($1::uuid[], id) NOTNULL AND deleted_at IS NULL ORDER BY name
 func QueryNodeByIDs(ids []string) ([]Node, error) {
 	var nodes []Node
-	err := api.DB.Model(&nodes).Where("id in (?)", pg.In(ids)).Select()
+	err := api.DB.Model(&nodes).
+		Relation("NodeShadowsocksR", func(query2 *orm.Query) (query *orm.Query, err error) {
+			return query2.Where("node_id in (?)", pg.In(ids)), nil
+		}).
+		Order("name ASC").
+		Select()
 	return nodes, err
 }

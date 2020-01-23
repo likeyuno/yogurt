@@ -10,12 +10,19 @@
 package handler
 
 import (
+	"errors"
 	"fmt"
 	"github.com/kallydev/yogurt/service/api/database/table"
 	"github.com/kallydev/yogurt/service/api/module/subscription"
 )
 
 func GetSubscription(key, protocol, client string) ([]byte, error) {
+	if protocol == "" {
+		protocol = "shadowsocksr"
+	}
+	if client == "" {
+		client = "shadowsocksr"
+	}
 	sub, err := table.QuerySubscriptionByKey(key)
 	if err != nil {
 		return nil, err
@@ -32,24 +39,34 @@ func GetSubscription(key, protocol, client string) ([]byte, error) {
 	for _, node := range nodes {
 		nodeIDs = append(nodeIDs, node.ID)
 	}
-	ssrs, err := table.QueryNodeShadowsocksRByIDs(nodeIDs)
-	if err != nil {
-		return nil, err
+	switch protocol {
+	case "shadowsocksr":
+		return buildShadowsocksr(pack.Name, nodes)
+	default:
+		return nil, errors.New("not support")
 	}
-	newSSRs := subscription.ShadowsocksRs{}
-	for i, ssr := range ssrs {
-		newSSRs = append(newSSRs, subscription.ShadowsocksR{
-			Host:             ssr.Host,
-			Port:             ssr.Port,
-			Method:           ssr.Method,
-			Password:         ssr.Password,
-			Obfuscation:      ssr.Obfuscation,
-			ObfuscationParam: ssr.ObfuscationParam,
-			Protocol:         ssr.Protocol,
-			ProtocolParam:    ssr.ProtocolParam,
-			Remarks:          fmt.Sprintf("%s %s", nodes[i].Location, nodes[i].Name),
-			Group:            pack.Name,
+}
+
+func buildShadowsocksr(packageName string, nodes []table.Node) ([]byte, error) {
+	ssrs := subscription.ShadowsocksRs{}
+	for _, node := range nodes {
+		ssrs = append(ssrs, subscription.ShadowsocksR{
+			Host:             node.NodeShadowsocksR.Host,
+			Port:             node.NodeShadowsocksR.Port,
+			Method:           node.NodeShadowsocksR.Method,
+			Password:         node.NodeShadowsocksR.Password,
+			Obfuscation:      node.NodeShadowsocksR.Obfuscation,
+			ObfuscationParam: node.NodeShadowsocksR.ObfuscationParam,
+			Protocol:         node.NodeShadowsocksR.Protocol,
+			ProtocolParam:    node.NodeShadowsocksR.ProtocolParam,
+			Remarks: func() string {
+				return fmt.Sprintf(fmt.Sprintf(
+					"[%s | %s] %s %s",
+					node.Tags[0], node.Tags[1], node.Location, node.Name,
+				))
+			}(),
+			Group: packageName,
 		})
 	}
-	return newSSRs.Build()
+	return ssrs.Build()
 }
