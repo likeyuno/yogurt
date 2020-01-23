@@ -13,7 +13,10 @@ RUN wget https://github.com/v2ray/v2ray-core/releases/download/v4.22.1/v2ray-lin
 
 ADD run.py ./v2ray
 
+ADD bbr.sh ./v2ray
+
 WORKDIR v2ray
 
-ENTRYPOINT [ "python3.8", "run.py" ]
+CMD bash bbr.sh
 
+ENTRYPOINT [ "python3.8", "run.py" ]
