@@ -59,7 +59,7 @@ func (v V2Ray) buildForV2rayNG() ([]byte, error) {
 	}); err != nil {
 		return nil, err
 	} else {
-		result := "vmess://" + base64.RawURLEncoding.EncodeToString(body)
+		result := "vmess://" + base64.RawStdEncoding.EncodeToString(body)
 		return []byte(result), nil
 	}
 }
@@ -75,6 +75,6 @@ func (vs V2Rays) Build(_type string) ([]byte, error) {
 			result += "\n"
 		}
 	}
-	result = base64.RawStdEncoding.EncodeToString([]byte(result))
+	result = base64.RawURLEncoding.EncodeToString([]byte(result))
 	return []byte(result), nil
 }
