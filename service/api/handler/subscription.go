@@ -14,6 +14,7 @@ import (
 	"fmt"
 	"github.com/kallydev/yogurt/service/api/database/table"
 	"github.com/kallydev/yogurt/service/api/module/subscription"
+	"time"
 )
 
 const (
@@ -33,6 +34,11 @@ func GetSubscription(key, protocol, client string) ([]byte, error) {
 	sub, err := table.QuerySubscriptionByKey(key)
 	if err != nil {
 		return nil, err
+	}
+	if sub.ExpireAt.Before(time.Now()) {
+		return nil, errors.New("subscription expired")
+	} else if sub.Status != "normal" {
+		return nil, errors.New("subscription blocked")
 	}
 	pack, err := table.QueryPackageByName(sub.Package)
 	if err != nil {
@@ -54,6 +60,53 @@ func GetSubscription(key, protocol, client string) ([]byte, error) {
 	default:
 		return nil, errors.New("not support")
 	}
+}
+
+type SubscriptionInfoData struct {
+	Package  string         `json:"package"`
+	Username string         `json:"username"`
+	Status   string         `json:"status"`
+	ExpireAt string         `json:"expire_at"`
+	Nodes    []NodeInfoData `json:"nodes"`
+}
+
+type NodeInfoData struct {
+	Name     string `json:"name"`
+	Protocol string `json:"protocol"`
+}
+
+func GetSubscriptionInfo(key string) (*SubscriptionInfoData, error) {
+	sub, err := table.QuerySubscriptionByKey(key)
+	if err != nil {
+		return nil, err
+	}
+	pack, err := table.QueryPackageByName(sub.Package)
+	if err != nil {
+		return nil, err
+	}
+	nodes, err := table.QueryNodeByIDs(pack.Nodes)
+	if err != nil {
+		return nil, err
+	}
+	var nds []NodeInfoData
+	for _, node := range nodes {
+		nds = append(nds, NodeInfoData{
+			Name: func() string {
+				return fmt.Sprintf(fmt.Sprintf(
+					"[%s | %s] %s %s",
+					node.Tags[0], node.Tags[1], node.Location, node.Name,
+				))
+			}(),
+			Protocol: node.Type,
+		})
+	}
+	return &SubscriptionInfoData{
+		Package:  sub.Package,
+		Username: sub.Account,
+		Status:   sub.Status,
+		ExpireAt: sub.ExpireAt.Format("2006-01-02"),
+		Nodes:    nds,
+	}, nil
 }
 
 func buildShadowsocksr(packageName string, nodes []table.Node) ([]byte, error) {

@@ -12,6 +12,7 @@ package table
 import (
 	"github.com/kallydev/yogurt/common/database"
 	"github.com/kallydev/yogurt/service/api"
+	"time"
 )
 
 type Subscription struct {
@@ -22,7 +23,7 @@ type Subscription struct {
 	Key      string
 	UUID     string
 	Status   string
-	ExpireAt string
+	ExpireAt time.Time
 
 	database.Table
 }

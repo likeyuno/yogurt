@@ -10,6 +10,7 @@
 package main
 
 import (
+	"github.com/kallydev/yogurt/common/restful"
 	"github.com/kallydev/yogurt/service/api"
 	"github.com/kallydev/yogurt/service/api/handler"
 	"github.com/labstack/echo/v4"
@@ -34,6 +35,14 @@ func main() {
 					return err
 				} else {
 					return ctx.String(http.StatusOK, string(result))
+				}
+			})
+			subGroup.GET("/:key/info", func(ctx echo.Context) error {
+				var key = ctx.Param("key")
+				if result, err := handler.GetSubscriptionInfo(key); err != nil {
+					return err
+				} else {
+					return ctx.JSONPretty(http.StatusOK, restful.RespondJSON(restful.OK, nil, result), restful.Ident)
 				}
 			})
 		}

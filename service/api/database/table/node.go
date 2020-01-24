@@ -38,6 +38,12 @@ func QueryNodeByID(id string) (*Node, error) {
 	return &node, err
 }
 
+func QueryNodeByIDs(ids []string) ([]Node, error) {
+	var nodes []Node
+	err := api.DB.Model(&nodes).Where("id in (?)", pg.In(ids)).Order("name ASC").Select()
+	return nodes, err
+}
+
 func QueryNodeByIDsAndType(_type string, ids []string) ([]Node, error) {
 	var ns []Node
 	q := api.DB.Model(&ns)
