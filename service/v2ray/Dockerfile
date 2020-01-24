@@ -15,6 +15,8 @@ ADD run.py ./v2ray
 
 ADD bbr.sh ./v2ray
 
+ADD config.json ./v2ray
+
 WORKDIR v2ray
 
 CMD bash bbr.sh
