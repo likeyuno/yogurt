@@ -16,12 +16,19 @@ import (
 	"github.com/kallydev/yogurt/service/api/module/subscription"
 )
 
+const (
+	ShadowsocksR = "shadowsocksr"
+	Vmess        = "vmess"
+
+	V2RayNG = "v2rayng"
+)
+
 func GetSubscription(key, protocol, client string) ([]byte, error) {
 	if protocol == "" {
-		protocol = "shadowsocksr"
+		protocol = ShadowsocksR
 	}
-	if client == "" {
-		client = "shadowsocksr"
+	if protocol == Vmess && client != V2RayNG {
+		client = V2RayNG
 	}
 	sub, err := table.QuerySubscriptionByKey(key)
 	if err != nil {
@@ -31,7 +38,7 @@ func GetSubscription(key, protocol, client string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	nodes, err := table.QueryNodeByIDs(pack.Nodes)
+	nodes, err := table.QueryNodeByIDsAndType(protocol, pack.Nodes)
 	if err != nil {
 		return nil, err
 	}
@@ -40,8 +47,10 @@ func GetSubscription(key, protocol, client string) ([]byte, error) {
 		nodeIDs = append(nodeIDs, node.ID)
 	}
 	switch protocol {
-	case "shadowsocksr":
+	case ShadowsocksR:
 		return buildShadowsocksr(pack.Name, nodes)
+	case Vmess:
+		return buildVmess(client, sub.UUID, nodes)
 	default:
 		return nil, errors.New("not support")
 	}
@@ -69,4 +78,23 @@ func buildShadowsocksr(packageName string, nodes []table.Node) ([]byte, error) {
 		})
 	}
 	return ssrs.Build()
+}
+
+func buildVmess(_type, uuid string, nodes []table.Node) ([]byte, error) {
+	vs := subscription.V2Rays{}
+	for _, node := range nodes {
+		vs = append(vs, subscription.V2Ray{
+			Name: func() string {
+				return fmt.Sprintf(fmt.Sprintf(
+					"[%s | %s] %s %s",
+					node.Tags[0], node.Tags[1], node.Location, node.Name,
+				))
+			}(),
+			Host:     node.NodeV2Ray.Host,
+			Port:     node.NodeV2Ray.Port,
+			UUID:     uuid,
+			Security: "auto",
+		})
+	}
+	return vs.Build(_type)
 }

@@ -43,6 +43,6 @@ func init() {
 			Conf.Postgres.Username, Conf.Postgres.Password,
 			Conf.Postgres.Host, Conf.Postgres.Port, Conf.Postgres.Database, nil,
 		)
-		DB.AddQueryHook(dbLogger{})
+		// DB.AddQueryHook(dbLogger{})
 	}
 }

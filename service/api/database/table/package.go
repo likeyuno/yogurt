@@ -15,7 +15,7 @@ import (
 )
 
 type Package struct {
-	tableName struct{} `pg:"public.packages_new"`
+	tableName struct{} `pg:"public.packages"`
 
 	Name        string
 	Description string

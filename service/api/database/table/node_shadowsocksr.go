@@ -15,7 +15,7 @@ import (
 )
 
 type NodeShadowsocksR struct {
-	tableName struct{} `pg:"public.nodes_shadowsocksr_new"`
+	tableName struct{} `pg:"public.nodes_shadowsocksr"`
 
 	NodeID           string
 	Host             string

@@ -15,6 +15,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"log"
 	"net/http"
+	"strings"
 )
 
 func main() {
@@ -26,14 +27,14 @@ func main() {
 			subGroup.GET("/:key", func(ctx echo.Context) error {
 				var (
 					key      = ctx.Param("key")
-					protocol = ctx.QueryParam("protocol")
-					client   = ctx.QueryParam("client")
+					protocol = strings.ToLower(ctx.QueryParam("protocol"))
+					client   = strings.ToLower(ctx.QueryParam("client"))
 				)
-				result, err := handler.GetSubscription(key, protocol, client)
-				if err != nil {
+				if result, err := handler.GetSubscription(key, protocol, client); err != nil {
 					return err
+				} else {
+					return ctx.String(http.StatusOK, string(result))
 				}
-				return ctx.String(http.StatusOK, string(result))
 			})
 		}
 	}

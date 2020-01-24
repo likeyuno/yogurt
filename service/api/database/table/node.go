@@ -17,7 +17,7 @@ import (
 )
 
 type Node struct {
-	tableName struct{} `pg:"public.nodes_new"`
+	tableName struct{} `pg:"public.nodes"`
 
 	Name        string
 	Description string
@@ -27,6 +27,7 @@ type Node struct {
 	FastOpen    bool
 
 	NodeShadowsocksR *NodeShadowsocksR
+	NodeV2Ray        *NodeV2Ray `pg:"nodes_v2ray"`
 
 	database.Table
 }
@@ -37,13 +38,21 @@ func QueryNodeByID(id string) (*Node, error) {
 	return &node, err
 }
 
-func QueryNodeByIDs(ids []string) ([]Node, error) {
-	var nodes []Node
-	err := api.DB.Model(&nodes).
-		Relation("NodeShadowsocksR", func(query2 *orm.Query) (query *orm.Query, err error) {
-			return query2.Where("node_id in (?)", pg.In(ids)), nil
-		}).
+func QueryNodeByIDsAndType(_type string, ids []string) ([]Node, error) {
+	var ns []Node
+	q := api.DB.Model(&ns)
+	switch _type {
+	case "shadowsocksr":
+		q = q.Relation("NodeShadowsocksR", func(query2 *orm.Query) (query *orm.Query, err error) {
+			return query2.Where("node_shadowsocksr.node_id in (?)", pg.In(ids)), nil
+		})
+	case "vmess":
+		q = q.Relation("NodeV2Ray", func(query2 *orm.Query) (query *orm.Query, err error) {
+			return query2.Where("nodes_v2ray.node_id in (?)", pg.In(ids)), nil
+		})
+	}
+	err := q.Where("type = ?", _type).
 		Order("name ASC").
 		Select()
-	return nodes, err
+	return ns, err
 }

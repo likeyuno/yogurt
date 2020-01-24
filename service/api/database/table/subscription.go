@@ -20,6 +20,7 @@ type Subscription struct {
 	Package  string
 	Account  string
 	Key      string
+	UUID     string
 	Status   string
 	ExpireAt string
 
