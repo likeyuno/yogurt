@@ -3,7 +3,7 @@ FROM ubuntu:18.04
 MAINTAINER KallyDev kallydev@gmail.com
 
 RUN apt update && \
-    apt install wget python3.8 python3-pip -y && \
+    apt install wget python3.8 python3-pip unzip -y && \
     pip3 install argparse
 
 RUN wget https://github.com/v2ray/v2ray-core/releases/download/v4.22.1/v2ray-linux-64.zip && \
