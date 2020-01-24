@@ -43,12 +43,12 @@ type V2RayNG struct {
 	Obfuscation     string `json:"type"`
 	ObfuscationHost string `json:"host"`
 	ObfuscationPath string `json:"path"`
-	// TLS             string `json:"tls"`
+	TLS             string `json:"tls"`
 }
 
 func (v V2Ray) buildForV2rayNG() ([]byte, error) {
 	if body, err := json.Marshal(&V2RayNG{
-		Version:     "1",
+		Version:     "2",
 		Name:        v.Name,
 		Host:        v.Host,
 		Port:        v.Port,
