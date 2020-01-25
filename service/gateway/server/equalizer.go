@@ -12,7 +12,6 @@ package server
 import (
 	"encoding/json"
 	"errors"
-	"github.com/kallydev/yogurt/common/context"
 	"github.com/kallydev/yogurt/common/restful"
 	"github.com/kallydev/yogurt/service/gateway/database/table"
 	"log"
@@ -41,7 +40,7 @@ func NewEqualizer() *Equalizer {
 
 func (e *Equalizer) autoUpdate() {
 	for {
-		if services, err := table.QueryAllServices(context.WithTimeoutNoCancel(time.Second * 3)); err != nil {
+		if services, err := table.QueryAllServices(); err != nil {
 			log.Println(err)
 		} else {
 			for _, service := range services {

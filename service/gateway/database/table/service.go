@@ -10,14 +10,14 @@
 package table
 
 import (
-	"database/sql"
 	"github.com/kallydev/yogurt/common/database"
 	"github.com/kallydev/yogurt/service/gateway"
 	"github.com/lib/pq"
-	"golang.org/x/net/context"
 )
 
 type Service struct {
+	tableName struct{} `pg:"gateway.services"`
+
 	Name    string
 	Host    string
 	Servers pq.StringArray
@@ -25,40 +25,10 @@ type Service struct {
 	database.Table
 }
 
-const (
-	QueryAllServicesSQL = `SELECT * FROM gateway.services`
-)
-
-func QueryAllServices(ctx context.Context) ([]Service, error) {
+func QueryAllServices() ([]Service, error) {
 	var services []Service
-	if rows, err := gateway.DB.QueryContext(ctx, QueryAllServicesSQL); err != nil {
-		return nil, err
-	} else if err := scanServices(rows, &services); err != nil {
+	if err := gateway.DB.Model(&services).Select(); err != nil {
 		return nil, err
 	}
 	return services, nil
-}
-
-func scanService(row *sql.Row, service *Service) error {
-	if err := row.Scan(
-		&service.ID, &service.Name, &service.Host, &service.Servers,
-		&service.CreatedAt, &service.UpdatedAt, &service.DeletedAt,
-	); err != nil {
-		return err
-	}
-	return nil
-}
-
-func scanServices(rows *sql.Rows, services *[]Service) error {
-	for rows.Next() {
-		service := Service{}
-		if err := rows.Scan(
-			&service.ID, &service.Name, &service.Host, &service.Servers,
-			&service.CreatedAt, &service.UpdatedAt, &service.DeletedAt,
-		); err != nil {
-			return err
-		}
-		*services = append(*services, service)
-	}
-	return nil
 }
