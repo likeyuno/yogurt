@@ -7,10 +7,12 @@
  * https://github.com/kallydev/yogurt/blob/master/LICENSE
  */
 
-package static
+package server
 
 import (
 	"errors"
+	"github.com/kallydev/yogurt/common/restful"
+	"github.com/kallydev/yogurt/service/static"
 	"github.com/labstack/echo/v4"
 	"net/http"
 )
@@ -18,12 +20,12 @@ import (
 func CROSS() echo.MiddlewareFunc {
 	return func(handlerFunc echo.HandlerFunc) echo.HandlerFunc {
 		return func(ctx echo.Context) error {
-			for _,  cross := range Conf.HTTPS.Cross {
+			for _, cross := range static.Conf.HTTPS.Cross {
 				if ctx.Request().Referer() == cross {
 					return handlerFunc(ctx)
 				}
 			}
-			return ctx.JSONPretty(http.StatusOK, RespondJSON(Error, errors.New("no permission to access"), nil), Ident)
+			return ctx.JSONPretty(http.StatusOK, restful.RespondJSON(restful.Error, errors.New("no permission to access"), nil), restful.Ident)
 		}
 	}
 }

@@ -7,7 +7,7 @@
  * https://github.com/kallydev/yogurt/blob/master/LICENSE
  */
 
-package static
+package server
 
 import (
 	"github.com/kallydev/yogurt/service/static/database/table"
@@ -19,17 +19,12 @@ func Logger() echo.MiddlewareFunc {
 	return func(handlerFunc echo.HandlerFunc) echo.HandlerFunc {
 		return func(ctx echo.Context) error {
 			go func(ctx echo.Context) {
-				l := table.Log{
-					Host:      ctx.Request().Host,
-					Path:      ctx.Request().URL.Path,
-					Params:    ctx.QueryParams().Encode(),
-					UserAgent: ctx.Request().UserAgent(),
-					IP:        ctx.RealIP(),
-				}
-				if res, err := DB.Insert(&l); err != nil {
+				if _, err := table.InsertLog(
+					ctx.Request().Host, ctx.Request().URL.Path,
+					ctx.QueryParams().Encode(), ctx.Request().UserAgent(),
+					ctx.RealIP(),
+				); err != nil {
 					log.Println(err)
-				} else {
-					log.Println(l, res)
 				}
 			}(ctx)
 			return handlerFunc(ctx)

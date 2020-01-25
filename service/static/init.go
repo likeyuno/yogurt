@@ -10,26 +10,28 @@
 package static
 
 import (
+	"github.com/go-pg/pg/v9"
+	"github.com/kallydev/yogurt/common/config"
+	"github.com/kallydev/yogurt/common/database"
 	_ "github.com/lib/pq"
 	"log"
-	"xorm.io/xorm"
 )
 
 var (
-	Conf *Config
-	DB   *xorm.Engine
+	Conf *config.Config
+	DB   *pg.DB
 )
 
-const confPath = "service/static/config/config.yaml"
+const confPath = "config/config_service-static.yaml"
 
 func init() {
 	var err error
-	if Conf, err = ParseConfigFile(confPath); err != nil {
+	if Conf, err = config.ParseConfigFile(confPath); err != nil {
 		log.Fatalln(err)
-	} else if DB, err = DialPostgres(
-		Conf.Postgres.Schema, Conf.Postgres.Username, Conf.Postgres.Password,
-		Conf.Postgres.Host, Conf.Postgres.Port, Conf.Postgres.Database, nil,
-	); err != nil {
-		log.Fatalln(err)
+	} else {
+		DB = database.DialPostgres(
+			Conf.Postgres.Username, Conf.Postgres.Password,
+			Conf.Postgres.Host, Conf.Postgres.Port, Conf.Postgres.Database, nil,
+		)
 	}
 }

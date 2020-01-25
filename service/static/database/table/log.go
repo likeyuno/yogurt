@@ -10,15 +10,33 @@
 package table
 
 import (
-	"github.com/kallydev/yogurt/service/static/database"
+	"github.com/kallydev/yogurt/common/database"
+	"github.com/kallydev/yogurt/service/static"
 )
 
 type Log struct {
-	Host      string `xorm:"'host'"`
-	Path      string `xorm:"'path'"`
-	Params    string `xorm:"'params'"`
-	UserAgent string `xorm:"'user_agent'"`
-	IP        string `xorm:"'ip'"`
+	tableName struct{} `pg:"static.logs"`
 
-	database.Table `xorm:"extends"`
+	Host      string
+	Path      string
+	Params    string
+	UserAgent string
+	IP        string
+
+	database.Table
+}
+
+func InsertLog(host, path, params, userAgent, ip string) (*Log, error) {
+	l := Log{
+		Host:      host,
+		Path:      path,
+		Params:    params,
+		UserAgent: userAgent,
+		IP:        ip,
+	}
+	if _, err := static.DB.Model(&l).Returning("*").Insert(); err != nil {
+		return nil, err
+	} else {
+		return &l, nil
+	}
 }
