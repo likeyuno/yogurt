@@ -7,10 +7,11 @@
  * https://github.com/kallydev/yogurt/blob/master/LICENSE
  */
 
-package static
+package server
 
 import (
 	"errors"
+	"github.com/kallydev/yogurt/common/restful"
 	"github.com/labstack/echo/v4"
 	"log"
 	"net/http"
@@ -38,7 +39,7 @@ func httpErrorHandlerFunc(err error, ctx echo.Context) {
 	if err, ok := err.(*echo.HTTPError); ok {
 		errs = errors.New(strings.ToLower(err.Message.(string)))
 	}
-	if err := ctx.JSONPretty(http.StatusOK, RespondJSON(Error, errs, nil), Ident); err != nil {
+	if err := ctx.JSONPretty(http.StatusOK, restful.RespondJSON(restful.Error, errs, nil), restful.Ident); err != nil {
 		log.Printf("http error handler error: %s", err)
 	}
 }

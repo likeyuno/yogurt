@@ -11,16 +11,15 @@ package main
 
 import (
 	"github.com/kallydev/yogurt/service/static"
+	"github.com/kallydev/yogurt/service/static/server"
 	"github.com/labstack/echo/v4/middleware"
 )
 
 func main() {
-	s := static.NewServer()
-	s.Use(static.Logger())
-	s.Use(static.CROSS())
+	s := server.NewServer()
+	s.Use(server.Logger())
+	s.Use(server.CROSS())
 	s.Use(middleware.Recover())
 	s.Static("/", "service/static/public")
-	s.Logger.Fatal(s.StartTLS(
-		static.Conf.HTTPS.Addr(), static.Conf.HTTPS.Public, static.Conf.HTTPS.Private,
-	))
+	s.Logger.Fatal(s.Start(static.Conf.HTTPS.Addr()))
 }
