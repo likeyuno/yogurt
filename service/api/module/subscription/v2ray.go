@@ -13,6 +13,8 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"errors"
+	"fmt"
+	"net"
 )
 
 type V2Ray struct {
@@ -23,10 +25,12 @@ type V2Ray struct {
 	Security string
 }
 
-func (v V2Ray) Build(_type string) ([]byte, error) {
-	switch _type {
+func (v V2Ray) Build(client string) ([]byte, error) {
+	switch client {
 	case "v2rayng":
 		return v.buildForV2rayNG()
+	case "quantumultx":
+		return v.buildForQuantumultX()
 	default:
 		return nil, errors.New("not support")
 	}
@@ -64,17 +68,29 @@ func (v V2Ray) buildForV2rayNG() ([]byte, error) {
 	}
 }
 
+func (v V2Ray) buildForQuantumultX() ([]byte, error) {
+	// vmess = hk-b2.yogurtcloud.com:8443, method=chacha20-ietf-poly1305, password=41d7b431-6d72-4a93-876e-70b983765e9b, tag=🇭🇰 [测试 | 视频] 香港 HK-B2c
+	format := "vmess = %s, method=%s, password=%s, tag=%s"
+	return []byte(fmt.Sprintf(format, net.JoinHostPort(v.Host, v.Port), v.Security, v.UUID, v.Name)), nil
+}
+
 type V2Rays []V2Ray
 
-func (vs V2Rays) Build(_type string) ([]byte, error) {
+func (vs V2Rays) Build(client string) ([]byte, error) {
 	result := ""
 	for i, v := range vs {
-		data, _ := v.Build(_type)
+		data, _ := v.Build(client)
 		result += string(data)
 		if i < len(vs)-1 {
 			result += "\n"
 		}
 	}
-	result = base64.RawURLEncoding.EncodeToString([]byte(result))
+	switch client {
+	case "v2rayng":
+		result = base64.RawURLEncoding.EncodeToString([]byte(result))
+	case "quantumultx":
+	default:
+		return nil, errors.New("not support")
+	}
 	return []byte(result), nil
 }

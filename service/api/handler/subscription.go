@@ -28,7 +28,7 @@ func GetSubscription(key, protocol, client string) ([]byte, error) {
 	if protocol == "" {
 		protocol = ShadowsocksR
 	}
-	if protocol == Vmess && client != V2RayNG {
+	if protocol == Vmess && client == "" {
 		client = V2RayNG
 	}
 	sub, err := table.QuerySubscriptionByKey(key)
@@ -146,7 +146,7 @@ func buildVmess(_type, uuid string, nodes []table.Node) ([]byte, error) {
 			Host:     node.NodeV2Ray.Host,
 			Port:     node.NodeV2Ray.Port,
 			UUID:     uuid,
-			Security: "auto",
+			Security: node.NodeV2Ray.Security,
 		})
 	}
 	return vs.Build(_type)
