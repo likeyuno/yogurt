@@ -19,8 +19,7 @@ import (
 func main() {
 	s := server.NewServer()
 	s.HandleFunc("/", s.EqualizerHandleFunc)
-	log.Fatalln(http.ListenAndServeTLS(
-		gateway.Conf.HTTPS.Addr(), gateway.Conf.HTTPS.Public,
-		gateway.Conf.HTTPS.Private, s,
+	log.Fatalln(http.ListenAndServe(
+		gateway.Conf.HTTPS.Addr(),  s,
 	))
 }

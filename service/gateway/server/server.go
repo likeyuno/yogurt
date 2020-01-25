@@ -12,13 +12,11 @@ package server
 import (
 	"encoding/json"
 	"errors"
-	"github.com/kallydev/yogurt/common/context"
 	"github.com/kallydev/yogurt/common/restful"
 	"github.com/kallydev/yogurt/service/gateway/database/table"
 	"log"
 	"net"
 	"net/http"
-	"time"
 )
 
 type Server struct {
@@ -41,9 +39,7 @@ func (s *Server) EqualizerHandleFunc(rw http.ResponseWriter, r *http.Request) {
 		if host, _, err := net.SplitHostPort(r.RemoteAddr); err != nil {
 			log.Println(err)
 			return
-		} else if _, err := table.InsertLog(context.WithTimeoutNoCancel(time.Second*3),
-			r.Host, r.Method, r.URL.Path, r.URL.Query().Encode(), r.UserAgent(), host,
-		); err != nil {
+		} else if _, err := table.InsertLog(r.Host, r.Method, r.URL.Path, r.URL.Query().Encode(), r.UserAgent(), host, ); err != nil {
 			log.Println(err)
 		}
 	}(*r)

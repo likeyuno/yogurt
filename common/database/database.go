@@ -10,40 +10,16 @@
 package database
 
 import (
-	"database/sql"
-	"github.com/kallydev/yogurt/common/context"
-	_ "github.com/lib/pq"
+	"github.com/go-pg/pg/v9"
 	"net"
-	"net/url"
 	"strconv"
-	"time"
 )
 
-func DialPostgres(username, password, host string, port int, database string, options map[string]string) (*sql.DB, error) {
-	if db, err := sql.Open(createURL("postgres", username, password, host, port, database, options)); err != nil {
-		return nil, err
-	} else if err := db.PingContext(context.WithTimeoutNoCancel(time.Second * 3)); err != nil {
-		return nil, err
-	} else {
-		return db, nil
-	}
-}
-
-func createURL(driver, username, password, host string, port int, database string, options map[string]string) (string, string) {
-	u := url.URL{
-		Scheme:   driver,
-		User:     url.UserPassword(username, password),
-		Host:     net.JoinHostPort(host, strconv.Itoa(port)),
-		Path:     database,
-		RawQuery: createValues(options),
-	}
-	return driver, u.String()
-}
-
-func createValues(options map[string]string) string {
-	values := url.Values{}
-	for k, v := range options {
-		values.Add(k, v)
-	}
-	return values.Encode()
+func DialPostgres(username, password, host string, port int, database string, options map[string]string) *pg.DB {
+	return pg.Connect(&pg.Options{
+		Addr:     net.JoinHostPort(host, strconv.Itoa(port)),
+		User:     username,
+		Password: password,
+		Database: database,
+	})
 }
