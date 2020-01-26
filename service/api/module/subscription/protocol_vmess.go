@@ -36,6 +36,8 @@ func (v Vmess) Build(c string) ([]byte, error) {
 		return NewV2RayNGVmess(v).Build()
 	case NetchClient:
 		return NewNetchVmess(v).Build()
+	case QuantumultClient:
+		return NewQuantumultVmess(v).Build()
 	case QuantumultXClient:
 		return NewQuantumultXVmess(v).Build()
 	default:
@@ -59,6 +61,8 @@ func (va VmessArray) Build(_client string) ([]byte, error) {
 	}
 	switch _client {
 	case V2RayNGClient:
+		fallthrough
+	case QuantumultClient:
 		fallthrough
 	case NetchClient:
 		result = base64.RawURLEncoding.EncodeToString([]byte(result))
