@@ -45,14 +45,14 @@ func (ssr ShadowsocksR) build() string {
 	)
 }
 
-type ShadowsocksRs []ShadowsocksR
+type ShadowsocksRArray []ShadowsocksR
 
-func (ssrs ShadowsocksRs) Build() ([]byte, error) {
+func (ssra ShadowsocksRArray) Build() ([]byte, error) {
 	result := ""
-	for i, ssr := range ssrs {
+	for i, ssr := range ssra {
 		data, _ := ssr.Build()
 		result += string(data)
-		if i < len(ssrs)-1 {
+		if i < len(ssra)-1 {
 			result += "\n"
 		}
 	}

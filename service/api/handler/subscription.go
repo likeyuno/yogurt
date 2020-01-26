@@ -54,9 +54,9 @@ func GetSubscription(key, protocol, client string) ([]byte, error) {
 	}
 	switch protocol {
 	case ShadowsocksR:
-		return buildShadowsocksr(pack.Name, nodes)
+		return subscription.BuildShadowsocksR(pack.Name, nodes)
 	case Vmess:
-		return buildVmess(client, sub.UUID, nodes)
+		return subscription.BuildVmess(client, sub.UUID, nodes)
 	default:
 		return nil, errors.New("not support")
 	}
@@ -109,52 +109,52 @@ func GetSubscriptionInfo(key string) (*SubscriptionInfoData, error) {
 	}, nil
 }
 
-func buildShadowsocksr(packageName string, nodes []table.Node) ([]byte, error) {
-	ssrs := subscription.ShadowsocksRs{}
-	for _, node := range nodes {
-		ssrs = append(ssrs, subscription.ShadowsocksR{
-			Host:             node.NodeShadowsocksR.Host,
-			Port:             node.NodeShadowsocksR.Port,
-			Method:           node.NodeShadowsocksR.Method,
-			Password:         node.NodeShadowsocksR.Password,
-			Obfuscation:      node.NodeShadowsocksR.Obfuscation,
-			ObfuscationParam: node.NodeShadowsocksR.ObfuscationParam,
-			Protocol:         node.NodeShadowsocksR.Protocol,
-			ProtocolParam:    node.NodeShadowsocksR.ProtocolParam,
-			Remarks: func() string {
-				return fmt.Sprintf(fmt.Sprintf(
-					"[%s | %s] %s %s",
-					node.Tags[0], node.Tags[1], node.Location, node.Name,
-				))
-			}(),
-			Group: packageName,
-		})
-	}
-	return ssrs.Build()
-}
+//func buildShadowsocksr(packageName string, nodes []table.Node) ([]byte, error) {
+//	ssrs := subscription.ShadowsocksRs{}
+//	for _, node := range nodes {
+//		ssrs = append(ssrs, subscription.ShadowsocksR{
+//			Host:             node.NodeShadowsocksR.Host,
+//			Port:             node.NodeShadowsocksR.Port,
+//			Method:           node.NodeShadowsocksR.Method,
+//			Password:         node.NodeShadowsocksR.Password,
+//			Obfuscation:      node.NodeShadowsocksR.Obfuscation,
+//			ObfuscationParam: node.NodeShadowsocksR.ObfuscationParam,
+//			Protocol:         node.NodeShadowsocksR.Protocol,
+//			ProtocolParam:    node.NodeShadowsocksR.ProtocolParam,
+//			Remarks: func() string {
+//				return fmt.Sprintf(fmt.Sprintf(
+//					"[%s | %s] %s %s",
+//					node.Tags[0], node.Tags[1], node.Location, node.Name,
+//				))
+//			}(),
+//			Group: packageName,
+//		})
+//	}
+//	return ssrs.Build()
+//}
 
-func buildVmess(_type, uuid string, nodes []table.Node) ([]byte, error) {
-	vs := subscription.V2Rays{}
-	for _, node := range nodes {
-		vs = append(vs, subscription.V2Ray{
-			Name: func() string {
-				return fmt.Sprintf(fmt.Sprintf(
-					"[%s | %s] %s %s",
-					node.Tags[0], node.Tags[1], node.Location, node.Name,
-				))
-			}(),
-			Host:            node.NodeV2Ray.Host,
-			Port:            node.NodeV2Ray.Port,
-			UUID:            uuid,
-			Security:        node.NodeV2Ray.Security,
-			AlertID:         node.NodeV2Ray.AlertID,
-			TLS:             node.NodeV2Ray.TLS,
-			TLSSecurity:     node.NodeV2Ray.TLSVerification,
-			TLSHost:         node.NodeV2Ray.TLSHost,
-			Obfuscation:     node.NodeV2Ray.Obfuscation,
-			ObfuscationHost: node.NodeV2Ray.ObfuscationHost,
-			ObfuscationPath: node.NodeV2Ray.ObfuscationPath,
-		})
-	}
-	return vs.Build(_type)
-}
+//func buildVmess(client, uuid string, nodes []table.Node) ([]byte, error) {
+//	va := protocol.VmessArray{}
+//	for _, node := range nodes {
+//		va = append(va, protocol.Vmess{
+//			Name:            func() string {
+//				return fmt.Sprintf(fmt.Sprintf(
+//					"[%s | %s] %s %s",
+//					node.Tags[0], node.Tags[1], node.Location, node.Name,
+//				))
+//			}(),
+//			Host:            node.NodeV2Ray.Host,
+//			Port:            node.NodeV2Ray.Port,
+//			UUID:            uuid,
+//			Security:        node.NodeV2Ray.Security,
+//			AlertID:         node.NodeV2Ray.AlertID,
+//			TLS:             node.NodeV2Ray.TLS,
+//			TLSSecurity:     node.NodeV2Ray.TLSVerification,
+//			TLSHost:         node.NodeV2Ray.TLSHost,
+//			Obfuscation:     node.NodeV2Ray.Obfuscation,
+//			ObfuscationHost: node.NodeV2Ray.ObfuscationHost,
+//			ObfuscationPath: node.NodeV2Ray.ObfuscationPath,
+//		})
+//	}
+//	return va.Build(client)
+//}
