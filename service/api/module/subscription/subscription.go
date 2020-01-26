@@ -22,7 +22,7 @@ type INode interface {
 	Build(_type string) ([]byte, error)
 }
 
-func BuildVmess(client, uuid string, nodes []table.Node) ([]byte, error) {
+func BuildVmess(group, client, uuid string, nodes []table.Node) ([]byte, error) {
 	va := VmessArray{}
 	for _, node := range nodes {
 		va = append(va, Vmess{
@@ -45,7 +45,7 @@ func BuildVmess(client, uuid string, nodes []table.Node) ([]byte, error) {
 			ObfuscationPath: node.NodeV2Ray.ObfuscationPath,
 		})
 	}
-	return va.Build(client)
+	return va.Build(group, client)
 }
 
 func BuildShadowsocksR(_package string, nodes []table.Node) ([]byte, error) {

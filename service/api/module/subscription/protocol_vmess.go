@@ -30,14 +30,14 @@ type Vmess struct {
 	ObfuscationPath string
 }
 
-func (v Vmess) Build(c string) ([]byte, error) {
+func (v Vmess) Build(group, c string) ([]byte, error) {
 	switch c {
 	case V2RayNGClient:
 		return NewV2RayNGVmess(v).Build()
 	case NetchClient:
 		return NewNetchVmess(v).Build()
 	case QuantumultClient:
-		return NewQuantumultVmess(v).Build()
+		return NewQuantumultVmess(group, v).Build()
 	case QuantumultXClient:
 		return NewQuantumultXVmess(v).Build()
 	default:
@@ -47,10 +47,10 @@ func (v Vmess) Build(c string) ([]byte, error) {
 
 type VmessArray []Vmess
 
-func (va VmessArray) Build(_client string) ([]byte, error) {
+func (va VmessArray) Build(group, _client string) ([]byte, error) {
 	result := ""
 	for i, vmess := range va {
-		if data, err := vmess.Build(_client); err != nil {
+		if data, err := vmess.Build(group, _client); err != nil {
 			return nil, err
 		} else {
 			result += string(data)

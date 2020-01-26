@@ -56,7 +56,7 @@ func GetSubscription(key, protocol, client string) ([]byte, error) {
 	case ShadowsocksR:
 		return subscription.BuildShadowsocksR(pack.Name, nodes)
 	case Vmess:
-		return subscription.BuildVmess(client, sub.UUID, nodes)
+		return subscription.BuildVmess(pack.Name, client, sub.UUID, nodes)
 	default:
 		return nil, errors.New("not support")
 	}

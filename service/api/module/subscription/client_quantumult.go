@@ -10,6 +10,7 @@ const QuantumultClient = "quantumult"
 
 type QuantumultVmess struct {
 	Name            string // tag=Sample-H
+	Group           string
 	Addr            string // addr=ws-c.example.com:80
 	UUID            string // password=23ad6b10-8d1a-40f7-8ad0-e3e35cd32291
 	Security        string // method=chacha20-ietf-poly1305
@@ -22,9 +23,10 @@ type QuantumultVmess struct {
 	UDPRelay        string // udp-relay=false
 }
 
-func NewQuantumultVmess(v Vmess) *QuantumultVmess {
+func NewQuantumultVmess(group string, v Vmess) *QuantumultVmess {
 	return &QuantumultVmess{
 		Name:     v.Name,
+		Group:    group,
 		Addr:     net.JoinHostPort(v.Host, v.Port),
 		UUID:     v.UUID,
 		Security: v.Security,
@@ -56,7 +58,7 @@ func (c QuantumultVmess) Build() ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	result += fmt.Sprintf("%s = vmess, %s, %s, %s, \"%s\",group=Fndroid", c.Name, host, port, c.Security, c.UUID)
+	result += fmt.Sprintf("%s = vmess, %s, %s, %s, \"%s\",group=%s", c.Name, host, port, c.Security, c.UUID, c.Group)
 	if c.TLS != "" {
 		result += fmt.Sprintf(", over-tls=%s", c.TLS)
 	}
