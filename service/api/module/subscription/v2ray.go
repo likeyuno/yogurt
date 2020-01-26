@@ -88,9 +88,67 @@ func (v V2Ray) buildForV2rayNG() ([]byte, error) {
 	}
 }
 
+type VmessForQuantumultX struct {
+	Name            string // tag=Sample-H
+	Addr            string // addr=ws-c.example.com:80
+	UUID            string // password=23ad6b10-8d1a-40f7-8ad0-e3e35cd32291
+	Security        string // method=chacha20-ietf-poly1305
+	Obfuscation     string // obfs=ws
+	ObfuscationHost string // obfs-host=ws-c.example.com
+	ObfuscationPath string // obfs-uri=/ws
+	FastOpen        string // fast-open=false
+	UDPRelay        string // udp-relay=false
+}
+
+/*
+ * vmess=ws-tls-b.example.com:443, method=chacha20-ietf-poly1305,
+ * password= 23ad6b10-8d1a-40f7-8ad0-e3e35cd32291, obfs-host=ws-tls-b.example.com,
+ * obfs=wss, obfs-uri=/ws, fast-open=false, udp-relay=false, tag=Sample-I
+ */
+
+func (vfqx VmessForQuantumultX) Build() []byte {
+	var result string
+	result += fmt.Sprintf("vmess=%s, ", vfqx.Addr)
+	result += fmt.Sprintf("method=%s, ", vfqx.Security)
+	result += fmt.Sprintf("password=%s, ", vfqx.UUID)
+	if vfqx.ObfuscationHost != "" {
+		result += fmt.Sprintf("obfs-host=%s, ", vfqx.ObfuscationHost)
+	}
+	if vfqx.Obfuscation != "" {
+		result += fmt.Sprintf("obfs=%s, ", vfqx.Obfuscation)
+	}
+	if vfqx.ObfuscationPath != "" {
+		result += fmt.Sprintf("obfs-uri=%s, ", vfqx.ObfuscationPath)
+	}
+	if vfqx.FastOpen != "" {
+		result += fmt.Sprintf("fast-open=%s, ", vfqx.FastOpen)
+	}
+	if vfqx.UDPRelay != "" {
+		result += fmt.Sprintf("udp-relay=%s, ", vfqx.UDPRelay)
+	}
+	result += fmt.Sprintf("tag=%s", vfqx.Name)
+	return []byte(result)
+}
+
 func (v V2Ray) buildForQuantumultX() ([]byte, error) {
-	format := "vmess = %s, method=%s, password=%s, tag=%s"
-	return []byte(fmt.Sprintf(format, net.JoinHostPort(v.Host, v.Port), v.Security, v.UUID, v.Name)), nil
+	return VmessForQuantumultX{
+		Name:     v.Name,
+		Addr:     net.JoinHostPort(v.Host, v.Port),
+		UUID:     v.UUID,
+		Security: v.Security,
+		Obfuscation: func() string {
+			var obf string
+			if v.Obfuscation == "websocket" {
+				obf = "ws"
+			}
+			if v.TLS {
+				obf += "s"
+			}
+			return obf
+		}(),
+		ObfuscationHost: v.ObfuscationHost,
+		ObfuscationPath: v.ObfuscationPath,
+	}.Build(), nil
 }
 
 type V2Rays []V2Ray
