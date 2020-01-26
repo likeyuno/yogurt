@@ -79,7 +79,7 @@ func (v V2Ray) buildForV2rayNG() ([]byte, error) {
 		TLS:             tls,
 		Obfuscation:     net,
 		ObfuscationHost: v.ObfuscationHost,
-		ObfuscationPath: v.Obfuscation,
+		ObfuscationPath: v.ObfuscationPath,
 	}); err != nil {
 		return nil, err
 	} else {
