@@ -143,10 +143,17 @@ func buildVmess(_type, uuid string, nodes []table.Node) ([]byte, error) {
 					node.Tags[0], node.Tags[1], node.Location, node.Name,
 				))
 			}(),
-			Host:     node.NodeV2Ray.Host,
-			Port:     node.NodeV2Ray.Port,
-			UUID:     uuid,
-			Security: node.NodeV2Ray.Security,
+			Host:            node.NodeV2Ray.Host,
+			Port:            node.NodeV2Ray.Port,
+			UUID:            uuid,
+			Security:        node.NodeV2Ray.Security,
+			AlertID:         node.NodeV2Ray.AlertID,
+			TLS:             node.NodeV2Ray.TLS,
+			TLSSecurity:     node.NodeV2Ray.TLSVerification,
+			TLSHost:         node.NodeV2Ray.TLSHost,
+			Obfuscation:     node.NodeV2Ray.Obfuscation,
+			ObfuscationHost: node.NodeV2Ray.ObfuscationHost,
+			ObfuscationPath: node.NodeV2Ray.ObfuscationPath,
 		})
 	}
 	return vs.Build(_type)

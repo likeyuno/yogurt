@@ -1,0 +1,27 @@
+{
+  "v": "2",
+  "ps": "[测试 | 视频] 香港 HK-B2a",
+  "add": "hk-b2.yogurtcloud.com",
+  "port": "80",
+  "id": "41d7b431-6d72-4a93-876e-70b983765e9b",
+  "aid": "0",
+  "net": "tcp",
+  "type": "none",
+  "host": "",
+  "path": "",
+  "tls": ""
+}
+
+{
+  "v": "2",
+  "ps": "[测试 | 视频] 香港 HK-B2c",
+  "add": "hk-b2.yogurtcloud.com",
+  "port": "8443",
+  "id": "41d7b431-6d72-4a93-876e-70b983765e9b",
+  "type": "none",
+  "aid": "0",
+  "tls": "",
+  "net": "tcp",
+  "host": "",
+  "path": ""
+}

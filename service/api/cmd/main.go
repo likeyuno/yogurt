@@ -14,7 +14,6 @@ import (
 	"github.com/kallydev/yogurt/service/api"
 	"github.com/kallydev/yogurt/service/api/handler"
 	"github.com/labstack/echo/v4"
-	"github.com/skip2/go-qrcode"
 	"log"
 	"net/http"
 	"strings"
@@ -44,17 +43,6 @@ func main() {
 					return err
 				} else {
 					return ctx.JSONPretty(http.StatusOK, restful.RespondJSON(restful.OK, nil, result), restful.Ident)
-				}
-			})
-			subGroup.GET("/:key/qrcode", func(ctx echo.Context) error {
-				if png, err := qrcode.Encode(
-					`vmess = hk-b2.yogurtcloud.com:80, method=chacha20-ietf-poly1305, password=41d7b431-6d72-4a93-876e-70b983765e9b, tag=🇭🇰 [测试 | 视频] 香港 HK-B2a
-vmess = hk-b2.yogurtcloud.com:443, method=chacha20-ietf-poly1305, password=41d7b431-6d72-4a93-876e-70b983765e9b, tag=🇭🇰 [测试 | 视频] 香港 HK-B2b
-vmess = hk-b2.yogurtcloud.com:8443, method=chacha20-ietf-poly1305, password=41d7b431-6d72-4a93-876e-70b983765e9b, tag=🇭🇰 [测试 | 视频] 香港 HK-B2c`, qrcode.Medium, 256); err != nil {
-					return err
-				} else {
-					ctx.Response().Header().Set("content-type", "image/png")
-					return ctx.String(http.StatusOK, string(png))
 				}
 			})
 		}

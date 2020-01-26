@@ -12,6 +12,7 @@ type NodeV2Ray struct {
 	Host            string
 	Port            string
 	Security        string
+	AlertID         string
 	TLS             bool
 	TLSHost         string
 	TLSVerification bool
