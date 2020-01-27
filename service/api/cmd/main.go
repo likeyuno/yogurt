@@ -45,6 +45,13 @@ func main() {
 					return ctx.JSONPretty(http.StatusOK, restful.RespondJSON(restful.OK, nil, result), restful.Ident)
 				}
 			})
+			subGroup.GET("/rank", func(ctx echo.Context) error {
+				result, err := handler.GetSubscriptionsRank()
+				if err != nil {
+					return err
+				}
+				return ctx.JSONPretty(http.StatusOK, restful.RespondJSON(restful.OK, nil, result), restful.Ident)
+			})
 		}
 	}
 	log.Fatalln(s.Start(api.Conf.HTTPS.Addr()))

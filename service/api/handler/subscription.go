@@ -37,7 +37,7 @@ func GetSubscription(key, protocol, client string) ([]byte, error) {
 	}
 	if sub.ExpireAt.Before(time.Now()) {
 		return nil, errors.New("subscription expired")
-	} else if sub.Status != "normal" {
+	} else if sub.Status != "normal" && sub.Status != "free" {
 		return nil, errors.New("subscription blocked")
 	}
 	pack, err := table.QueryPackageByName(sub.Package)
@@ -109,52 +109,31 @@ func GetSubscriptionInfo(key string) (*SubscriptionInfoData, error) {
 	}, nil
 }
 
-//func buildShadowsocksr(packageName string, nodes []table.Node) ([]byte, error) {
-//	ssrs := subscription.ShadowsocksRs{}
-//	for _, node := range nodes {
-//		ssrs = append(ssrs, subscription.ShadowsocksR{
-//			Host:             node.NodeShadowsocksR.Host,
-//			Port:             node.NodeShadowsocksR.Port,
-//			Method:           node.NodeShadowsocksR.Method,
-//			Password:         node.NodeShadowsocksR.Password,
-//			Obfuscation:      node.NodeShadowsocksR.Obfuscation,
-//			ObfuscationParam: node.NodeShadowsocksR.ObfuscationParam,
-//			Protocol:         node.NodeShadowsocksR.Protocol,
-//			ProtocolParam:    node.NodeShadowsocksR.ProtocolParam,
-//			Remarks: func() string {
-//				return fmt.Sprintf(fmt.Sprintf(
-//					"[%s | %s] %s %s",
-//					node.Tags[0], node.Tags[1], node.Location, node.Name,
-//				))
-//			}(),
-//			Group: packageName,
-//		})
-//	}
-//	return ssrs.Build()
-//}
+type GetSubscriptionsRankData struct {
+	Subscriptions []struct {
+		Name    string `json:"name"`
+		Expired string `json:"expired"`
+	} `json:"subscriptions"`
+}
 
-//func buildVmess(client, uuid string, nodes []table.Node) ([]byte, error) {
-//	va := protocol.VmessArray{}
-//	for _, node := range nodes {
-//		va = append(va, protocol.Vmess{
-//			Name:            func() string {
-//				return fmt.Sprintf(fmt.Sprintf(
-//					"[%s | %s] %s %s",
-//					node.Tags[0], node.Tags[1], node.Location, node.Name,
-//				))
-//			}(),
-//			Host:            node.NodeV2Ray.Host,
-//			Port:            node.NodeV2Ray.Port,
-//			UUID:            uuid,
-//			Security:        node.NodeV2Ray.Security,
-//			AlertID:         node.NodeV2Ray.AlertID,
-//			TLS:             node.NodeV2Ray.TLS,
-//			TLSSecurity:     node.NodeV2Ray.TLSVerification,
-//			TLSHost:         node.NodeV2Ray.TLSHost,
-//			Obfuscation:     node.NodeV2Ray.Obfuscation,
-//			ObfuscationHost: node.NodeV2Ray.ObfuscationHost,
-//			ObfuscationPath: node.NodeV2Ray.ObfuscationPath,
-//		})
-//	}
-//	return va.Build(client)
-//}
+func GetSubscriptionsRank() (*GetSubscriptionsRankData, error) {
+	data := GetSubscriptionsRankData{}
+	subs, err := table.QuerySubscriptionsOrder()
+	if err != nil {
+		return nil, err
+	}
+	for _, sub := range subs {
+		name := func() string {
+			l := len(sub.Account) - 3
+			left := l / 2
+			return sub.Account[:left] + "***" + sub.Account[l+3-left:]
+		}()
+		data.Subscriptions = append(data.Subscriptions, struct {
+			Name    string `json:"name"`
+			Expired string `json:"expired"`
+		}{
+			Name: name, Expired: sub.ExpireAt.Format("2006-01-02"),
+		})
+	}
+	return &data, err
+}

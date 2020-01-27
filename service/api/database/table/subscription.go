@@ -33,3 +33,9 @@ func QuerySubscriptionByKey(key string) (*Subscription, error) {
 	err := api.DB.Model(&sub).Where("key = ?", key).Select()
 	return &sub, err
 }
+
+func QuerySubscriptionsOrder() ([]Subscription, error) {
+	var subs []Subscription
+	err := api.DB.Model(&subs).Order("expire_at DESC").Limit(10).Select()
+	return subs, err
+}
