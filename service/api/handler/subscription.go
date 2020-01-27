@@ -35,10 +35,10 @@ func GetSubscription(key, protocol, client string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	if sub.ExpireAt.Before(time.Now()) {
-		return nil, errors.New("subscription expired")
-	} else if sub.Status != "normal" && sub.Status != "free" {
+	if sub.Status != "free" && sub.Status != "normal" {
 		return nil, errors.New("subscription blocked")
+	} else if sub.ExpireAt.Before(time.Now()) && sub.Status != "free" {
+		return nil, errors.New("subscription expired")
 	}
 	pack, err := table.QueryPackageByName(sub.Package)
 	if err != nil {
