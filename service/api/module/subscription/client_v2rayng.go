@@ -43,6 +43,9 @@ func NewV2RayNGVmess(v Vmess) *V2RayNGVmess {
 	if net == "" {
 		net = "tcp"
 	}
+	if net == "websocket" {
+		net = "ws"
+	}
 	return &V2RayNGVmess{
 		Version:         "2",
 		Name:            v.Name,
