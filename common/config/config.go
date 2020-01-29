@@ -17,6 +17,7 @@ import (
 
 type Config struct {
 	HTTPS    HTTPS    `yaml:"https"`
+	Telegram Telegram `yaml:"telegram"`
 	Postgres Postgres `yaml:"postgres"`
 }
 
@@ -26,6 +27,10 @@ type HTTPS struct {
 	Public  string   `yaml:"public"`
 	Private string   `yaml:"private"`
 	Cross   []string `yaml:"cross"`
+}
+
+type Telegram struct {
+	Token string `yaml:"token"`
 }
 
 type Postgres struct {
