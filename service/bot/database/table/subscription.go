@@ -10,8 +10,8 @@
 package table
 
 import (
+	"github.com/go-pg/pg/v9"
 	"github.com/kallydev/yogurt/common/database"
-	"github.com/kallydev/yogurt/service/bot"
 	"time"
 )
 
@@ -28,14 +28,14 @@ type Subscription struct {
 	database.Table
 }
 
-func QuerySubscriptionByKey(key string) (*Subscription, error) {
+func QuerySubscriptionByKey(db *pg.DB, key string) (*Subscription, error) {
 	sub := Subscription{}
-	err := bot.DB.Model(&sub).Where("key = ?", key).Select()
+	err := db.Model(&sub).Where("key = ?", key).Select()
 	return &sub, err
 }
 
-func QuerySubscriptionsByUsername(username string) ([]Subscription, error) {
+func QuerySubscriptionsByUsername(db *pg.DB, username string) ([]Subscription, error) {
 	var subs []Subscription
-	err := bot.DB.Model(&subs).Where("account = ?", username).Select()
+	err := db.Model(&subs).Where("account = ?", username).Select()
 	return subs, err
 }

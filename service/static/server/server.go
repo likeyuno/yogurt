@@ -40,6 +40,6 @@ func httpErrorHandlerFunc(err error, ctx echo.Context) {
 		errs = errors.New(strings.ToLower(err.Message.(string)))
 	}
 	if err := ctx.JSONPretty(http.StatusOK, restful.RespondJSON(restful.Error, errs, nil), restful.Ident); err != nil {
-		log.Printf("http error handler error: %s", err)
+		log.Printf("http error handler_old error: %s", err)
 	}
 }

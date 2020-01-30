@@ -10,8 +10,8 @@
 package table
 
 import (
+	"github.com/go-pg/pg/v9"
 	"github.com/kallydev/yogurt/common/database"
-	"github.com/kallydev/yogurt/service/bot"
 )
 
 type Account struct {
@@ -28,20 +28,20 @@ type Account struct {
 	database.Table
 }
 
-func QueryAccountByUsername(username string) (*Account, error) {
+func QueryAccountByUsername(db *pg.DB, username string) (*Account, error) {
 	var account Account
-	err := bot.DB.Model(&account).Where("username = ?", username).Select()
+	err := db.Model(&account).Where("username = ?", username).Select()
 	return &account, err
 }
 
-func QueryAccountByTelegram(telegram string) (*Account, error) {
+func QueryAccountByTelegram(db *pg.DB, telegram string) (*Account, error) {
 	var account Account
-	err := bot.DB.Model(&account).Where("telegram = ?", telegram).Select()
+	err := db.Model(&account).Where("telegram = ?", telegram).Select()
 	return &account, err
 }
 
-func UpdateAccountTelegramByUsername(username, telegram string) (*Account, error) {
+func UpdateAccountTelegramByUsername(db *pg.DB, username, telegram string) (*Account, error) {
 	var account Account
-	_, err := bot.DB.Model(&account).Set("telegram = ?", telegram).Where("username = ?", username).Returning("*").Update()
+	_, err := db.Model(&account).Set("telegram = ?", telegram).Where("username = ?", username).Returning("*").Update()
 	return &account, err
 }

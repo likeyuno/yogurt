@@ -13,7 +13,7 @@ import (
 	"github.com/go-pg/pg/v9"
 	"github.com/kallydev/yogurt/common/config"
 	"github.com/kallydev/yogurt/common/database"
-	"github.com/kallydev/yogurt/service/bot/database/server"
+	"github.com/kallydev/yogurt/service/bot/core"
 	_ "github.com/lib/pq"
 	"log"
 )
@@ -21,7 +21,7 @@ import (
 var (
 	Conf    *config.Config
 	DB      *pg.DB
-	TeleBot *server.Bot
+	TeleBot *core.Bot
 	Token   string
 )
 

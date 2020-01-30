@@ -7,25 +7,25 @@
  * https://github.com/kallydev/yogurt/blob/master/LICENSE
  */
 
-package server
+package core
 
 import (
-	"gopkg.in/tucnak/telebot.v2"
-	"time"
+	tg "github.com/go-telegram-bot-api/telegram-bot-api"
 )
 
 type Bot struct {
-	*telebot.Bot
+	*tg.BotAPI
 }
 
 func NewBot(token string) (*Bot, error) {
-	b, err := telebot.NewBot(telebot.Settings{
-		Token: token,
-		Poller: &telebot.LongPoller{
-			Timeout: 10 * time.Second,
-		},
-	})
+	b, err := tg.NewBotAPI(token)
 	return &Bot{
-		Bot: b,
+		BotAPI: b,
 	}, err
+}
+
+func (b *Bot) Run() (tg.UpdatesChannel, error) {
+	u := tg.NewUpdate(0)
+	u.Timeout = 60
+	return b.GetUpdatesChan(u)
 }
