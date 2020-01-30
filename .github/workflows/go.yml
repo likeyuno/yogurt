@@ -34,4 +34,4 @@ jobs:
         run: go build -v ./service/reverse/cmd/main.go
 
       - name: Build bot service
-          run: go build -v ./service/bot/cmd/main.go
+        run: go build -v ./service/bot/cmd/main.go
