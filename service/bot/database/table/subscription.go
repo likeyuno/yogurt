@@ -12,6 +12,7 @@ package table
 import (
 	"github.com/go-pg/pg/v9"
 	"github.com/kallydev/yogurt/common/database"
+	"github.com/kallydev/yogurt/common/random"
 	"time"
 )
 
@@ -38,4 +39,15 @@ func QuerySubscriptionsByUsername(db *pg.DB, username string) ([]Subscription, e
 	var subs []Subscription
 	err := db.Model(&subs).Where("account = ?", username).Select()
 	return subs, err
+}
+
+func InsertSubscription(db *pg.DB, account, _package string, day time.Duration) (*Subscription, error) {
+	var subscription = Subscription{
+		Package:  _package,
+		Account:  account,
+		Key:      random.String(8),
+		ExpireAt: time.Now().Add(day),
+	}
+	_, err := db.Model(&subscription).Returning("*").Insert()
+	return &subscription, err
 }

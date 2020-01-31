@@ -30,7 +30,8 @@ type HTTPS struct {
 }
 
 type Telegram struct {
-	Token string `yaml:"token"`
+	Master int    `yaml:"master"`
+	Token  string `yaml:"token"`
 }
 
 type Postgres struct {

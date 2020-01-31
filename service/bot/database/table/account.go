@@ -45,3 +45,13 @@ func UpdateAccountTelegramByUsername(db *pg.DB, username, telegram string) (*Acc
 	_, err := db.Model(&account).Set("telegram = ?", telegram).Where("username = ?", username).Returning("*").Update()
 	return &account, err
 }
+
+func InsertAccount(db *pg.DB, username, email, qq string) (*Account, error) {
+	var account = Account{
+		Username: username,
+		QQ:       qq,
+		Email:    email,
+	}
+	_, err := db.Model(&account).Returning("*").Insert()
+	return &account, err
+}

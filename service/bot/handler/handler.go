@@ -54,6 +54,8 @@ func handleCommand(bot *tg.BotAPI, update tg.Update) {
 		command.Link(bot, update)
 	case "info":
 		command.Info(bot, update)
+	case "create":
+		command.Create(bot, update)
 	default:
 		//if update.Message.Chat.Type == "private" {
 		//	b.Send(message.DefaultMessage(update.Message.Chat.ID, update.Message.MessageID))

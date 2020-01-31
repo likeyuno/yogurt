@@ -91,3 +91,25 @@ func InfoMessage(username string, expiredAt time.Time) string {
 		username, expiredAt.Format("2006-01-02"),
 	)
 }
+
+func CreateParamErrorMessage() string {
+	return fmt.Sprintf(
+		"哎呀，缺少參數或格式錯誤",
+	)
+}
+
+func PackageNotFoundMessage() string {
+	return fmt.Sprintf("哎呀，沒有找到這種套餐")
+}
+
+func CreateAccountSuccessMessage() string {
+	return fmt.Sprintf("好啦，創建賬號成功")
+}
+
+func CreateSubscriptionSuccessMessage(key, expiredAt string) string {
+	return fmt.Sprintf("好啦，創建訂閱成功\n\n訂閱 Key %s\n到期時間 %s", key, expiredAt)
+}
+
+func NotIsMasterMessage() string {
+	return fmt.Sprintf("哼，我才不聽你的呢")
+}
