@@ -15,3 +15,5 @@
 /config/cert/*
 !/config/cert/
 !/config/cert/README.md
+
+build
